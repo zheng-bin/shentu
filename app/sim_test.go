@@ -145,21 +145,13 @@ func TestAppImportExport(t *testing.T) {
 
 	newApp := NewShentuApp(log.NewNopLogger(), newDB, nil, true, map[int64]bool{},
 		DefaultNodeHome, simapp.FlagPeriodValue, MakeEncodingConfig(), EmptyAppOptions{}, fauxMerkleModeOpt)
+	require.Equal(t, "Shentu", newApp.Name())
 
 	var genesisState GenesisState
 	err = json.Unmarshal(exported.AppState, &genesisState)
 	require.NoError(t, err)
 
 	ctxA := app.NewContext(true, tmproto.Header{Height: app.LastBlockHeight()})
-
-	// bypass an error where the original chain's SendEnabled is `null` instead of `[]`
-	// TODO: remove this and make it work
-	pA := app.BankKeeper.GetParams(ctxA)
-	if len(pA.SendEnabled) == 0 {
-		pA.SendEnabled = []*bank.SendEnabled{}
-	}
-	app.BankKeeper.SetParams(ctxA, pA)
-
 	ctxB := newApp.NewContext(true, tmproto.Header{Height: app.LastBlockHeight()})
 	newApp.mm.InitGenesis(ctxB, app.Codec(), genesisState)
 	newApp.StoreConsensusParams(ctxB, exported.ConsensusParams)
