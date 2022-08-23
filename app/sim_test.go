@@ -33,9 +33,8 @@ import (
 	staking "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfer "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
 	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
- 	"github.com/cosmos/ibc-go/v3/testing/simapp"
+        "github.com/cosmos/ibc-go/v3/testing/simapp"
         "github.com/cosmos/ibc-go/v3/testing/simapp/helpers"
-
 
 	cert "github.com/certikfoundation/shentu/v2/x/cert/types"
 	cvm "github.com/certikfoundation/shentu/v2/x/cvm/types"
