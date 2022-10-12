@@ -11,6 +11,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&govtypes.MsgSubmitProposal{},
 		&govtypes.MsgVote{},
+		&govtypes.MsgVoteWeighted{},
 		&govtypes.MsgDeposit{},
 	)
 	registry.RegisterInterface(
