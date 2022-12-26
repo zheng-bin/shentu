@@ -48,9 +48,9 @@ func (k msgServer) SubmitProposal(goCtx context.Context, msg *govtypes.MsgSubmit
 		return nil, err
 	}
 
-	if err := updateAfterSubmitProposal(ctx, k.Keeper, proposal); err != nil {
-		return nil, err
-	}
+	//if err := updateAfterSubmitProposal(ctx, k.Keeper, proposal); err != nil {
+	//	return nil, err
+	//}
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
