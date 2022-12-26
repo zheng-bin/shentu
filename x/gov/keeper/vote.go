@@ -88,8 +88,8 @@ func (keeper Keeper) SetCertifierVote(ctx sdk.Context, proposalID uint64) {
 func (keeper Keeper) IsCertifierVoted(ctx sdk.Context, proposalID uint64) bool {
 	store := ctx.KVStore(keeper.storeKey)
 	bz := store.Get(types.CertVotesKey(proposalID))
-	if bz == nil {
-		return false
+	if bz != nil {
+		return true
 	}
-	return true
+	return false
 }
