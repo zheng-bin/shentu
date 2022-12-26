@@ -3,9 +3,6 @@ package keeper
 import (
 	"context"
 	"fmt"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	certtypes "github.com/shentufoundation/shentu/v2/x/cert/types"
-	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 	"strconv"
 
 	"github.com/armon/go-metrics"
@@ -13,6 +10,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/types"
+
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	certtypes "github.com/shentufoundation/shentu/v2/x/cert/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
 type msgServer struct {
