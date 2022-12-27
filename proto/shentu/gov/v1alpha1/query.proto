@@ -69,7 +69,7 @@ message QueryProposalsRequest {
   option (gogoproto.goproto_getters) = false;
 
   // proposal_status defines the status of the proposals.
-  ProposalStatus proposal_status = 1;
+  cosmos.gov.v1beta1.ProposalStatus proposal_status = 1;
 
   // voter defines the voter address for the proposals.
   string voter = 2;

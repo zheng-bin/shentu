@@ -53,7 +53,7 @@ func (k Keeper) Proposals(c context.Context, req *types.QueryProposalsRequest) (
 		matchVoter, matchDepositor, matchStatus := true, true, true
 
 		// match status (if supplied/valid)
-		if types.ValidProposalStatus(req.ProposalStatus) {
+		if govtypes.ValidProposalStatus(req.ProposalStatus) {
 			matchStatus = p.Status == req.ProposalStatus
 		}
 
@@ -278,10 +278,10 @@ func (k Keeper) TallyResult(c context.Context, req *types.QueryTallyResultReques
 	var tallyResult govtypes.TallyResult
 
 	switch {
-	case proposal.Status == types.StatusDepositPeriod:
+	case proposal.Status == govtypes.StatusDepositPeriod:
 		tallyResult = govtypes.EmptyTallyResult()
 
-	case proposal.Status == types.StatusPassed || proposal.Status == types.StatusRejected:
+	case proposal.Status == govtypes.StatusPassed || proposal.Status == govtypes.StatusRejected:
 		tallyResult = proposal.FinalTallyResult
 
 	default:

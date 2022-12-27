@@ -251,7 +251,7 @@ func (suite *KeeperTestSuite) TestQueryProposals() {
 	}
 
 	for _, tc := range tests {
-		queryResponse, err := queryClient.Proposals(ctx.Context(), &types.QueryProposalsRequest{ProposalStatus: types.ProposalStatus(tc.proposalStatus), Voter: tc.voter, Depositor: tc.depositor})
+		queryResponse, err := queryClient.Proposals(ctx.Context(), &types.QueryProposalsRequest{ProposalStatus: govtypes.ProposalStatus(tc.proposalStatus), Voter: tc.voter, Depositor: tc.depositor})
 		suite.Require().NoError(err)
 		if tc.shouldPass {
 			suite.Require().Equal(tc.filteredProposalsLength, len(queryResponse.Proposals))
