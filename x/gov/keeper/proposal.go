@@ -11,10 +11,31 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/shentufoundation/shentu/v2/x/gov/types"
-	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
 // Proposal
+func (k Keeper) ActivateVotingPeriod(ctx sdk.Context, proposal types.Proposal) {
+	proposal.VotingStartTime = ctx.BlockHeader().Time
+	votingPeriod := k.GetVotingParams(ctx).VotingPeriod
+	oldVotingEndTime := proposal.VotingEndTime
+	proposal.VotingEndTime = proposal.VotingStartTime.Add(votingPeriod)
+	oldDepositEndTime := proposal.DepositEndTime
+
+	// Default case: for plain text proposals, community pool spend proposals;
+	// and second round of software upgrade, certifier update and shield claim
+	// proposals.
+	if k.IsCertifierVoted(ctx, proposal.ProposalId) {
+		k.RemoveFromActiveProposalQueue(ctx, proposal.ProposalId, oldVotingEndTime)
+	} else {
+		proposal.DepositEndTime = ctx.BlockHeader().Time
+	}
+	proposal.Status = govtypes.StatusVotingPeriod
+
+	k.SetProposal(ctx, proposal)
+	k.RemoveFromInactiveProposalQueue(ctx, proposal.ProposalId, oldDepositEndTime)
+	k.InsertActiveProposalQueue(ctx, proposal.ProposalId, proposal.VotingEndTime)
+
+}
 
 // GetProposal get Proposal from store by ProposalID.
 func (k Keeper) GetProposal(ctx sdk.Context, proposalID uint64) (types.Proposal, bool) {
@@ -107,15 +128,6 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, content govtypes.Content, addr s
 		return types.Proposal{}, sdkerrors.Wrap(govtypes.ErrNoProposalHandlerExists, content.ProposalRoute())
 	}
 
-	proposalID, err := k.GetProposalID(ctx)
-	if err != nil {
-		return types.Proposal{}, err
-	}
-
-	if c, ok := content.(*shieldtypes.ShieldClaimProposal); ok {
-		c.ProposalId = proposalID
-	}
-
 	// Execute the proposal content in a cache-wrapped context to validate the
 	// actual parameter changes before the proposal proceeds through the
 	// governance process. State is not persisted.
@@ -125,17 +137,33 @@ func (k Keeper) SubmitProposal(ctx sdk.Context, content govtypes.Content, addr s
 		return types.Proposal{}, sdkerrors.Wrap(govtypes.ErrInvalidProposalContent, err.Error())
 	}
 
-	submitTime := ctx.BlockHeader().Time
-	depositPeriod := k.GetDepositParams(ctx).MaxDepositPeriod
-
-	var proposal types.Proposal
-	proposal, err = types.NewProposal(content, proposalID, addr, k.IsCouncilMember(ctx, addr), submitTime, submitTime.Add(depositPeriod))
+	proposalID, err := k.GetProposalID(ctx)
 	if err != nil {
 		return types.Proposal{}, err
 	}
+
+	submitTime := ctx.BlockHeader().Time
+	depositPeriod := k.GetDepositParams(ctx).MaxDepositPeriod
+
+	proposal, err := types.NewProposal(content, proposalID, addr, submitTime, submitTime.Add(depositPeriod))
+	if err != nil {
+		return types.Proposal{}, err
+	}
+
 	k.SetProposal(ctx, proposal)
 	k.InsertInactiveProposalQueue(ctx, proposalID, proposal.DepositEndTime)
 	k.SetProposalID(ctx, proposalID+1)
+
+	// called right after a proposal is submitted
+	k.AfterProposalSubmission(ctx, proposalID)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			govtypes.EventTypeSubmitProposal,
+			sdk.NewAttribute(govtypes.AttributeKeyProposalID, fmt.Sprintf("%d", proposalID)),
+		),
+	)
+
 	return proposal, nil
 }
 
@@ -164,43 +192,6 @@ func (k Keeper) GetProposals(ctx sdk.Context) (proposals types.Proposals) {
 	return
 }
 
-// ActivateVotingPeriod switches proposals from deposit period to voting period.
-func (k Keeper) ActivateVotingPeriod(ctx sdk.Context, proposal types.Proposal) {
-	proposal.VotingStartTime = ctx.BlockHeader().Time
-	votingPeriod := k.GetVotingParams(ctx).VotingPeriod
-	oldVotingEndTime := proposal.VotingEndTime
-	proposal.VotingEndTime = proposal.VotingStartTime.Add(votingPeriod)
-	oldDepositEndTime := proposal.DepositEndTime
-
-	if proposal.HasSecurityVoting() && (proposal.Status != types.StatusCertifierVotingPeriod) {
-		// Special case: just for software upgrade, certifier update and shield claim proposals.
-		proposal.Status = types.StatusCertifierVotingPeriod
-	} else {
-		// Default case: for plain text proposals, community pool spend proposals;
-		// and second round of software upgrade, certifier update and shield claim
-		// proposals.
-		if proposal.Status == types.StatusCertifierVotingPeriod {
-			k.RemoveFromActiveProposalQueue(ctx, proposal.ProposalId, oldVotingEndTime)
-		} else {
-			proposal.DepositEndTime = ctx.BlockHeader().Time
-		}
-		proposal.Status = types.StatusValidatorVotingPeriod
-	}
-
-	k.SetProposal(ctx, proposal)
-	k.RemoveFromInactiveProposalQueue(ctx, proposal.ProposalId, oldDepositEndTime)
-	k.InsertActiveProposalQueue(ctx, proposal.ProposalId, proposal.VotingEndTime)
-}
-
-// ActivateCouncilProposalVotingPeriod only switches proposals of council members.
-func (k Keeper) ActivateCouncilProposalVotingPeriod(ctx sdk.Context, proposal types.Proposal) bool {
-	if proposal.IsProposerCouncilMember {
-		k.ActivateVotingPeriod(ctx, proposal)
-		return true
-	}
-	return false
-}
-
 // GetProposalsFiltered returns proposals filtered.
 func (k Keeper) GetProposalsFiltered(ctx sdk.Context, params types.QueryProposalsParams) []types.Proposal {
 	proposals := k.GetProposals(ctx)
@@ -210,7 +201,7 @@ func (k Keeper) GetProposalsFiltered(ctx sdk.Context, params types.QueryProposal
 		matchVoter, matchDepositor, matchStatus := true, true, true
 
 		// match status (if supplied/valid)
-		if types.ValidProposalStatus(params.ProposalStatus) {
+		if govtypes.ValidProposalStatus(params.ProposalStatus) {
 			matchStatus = p.Status == params.ProposalStatus
 		}
 

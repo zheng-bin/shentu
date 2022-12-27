@@ -33,8 +33,7 @@ func TestDecodeStore(t *testing.T) {
 	content := govtypes.ContentFromProposalType("test", "test", govtypes.ProposalTypeText)
 	proposalID := rand.Uint64()
 	proposer := RandomAccount()
-	isMember := 1 == rand.Intn(2)
-	proposal, _ := types.NewProposal(content, proposalID, proposer.Address, isMember, endTime, endTime.Add(24*time.Hour))
+	proposal, _ := types.NewProposal(content, proposalID, proposer.Address, endTime, endTime.Add(24*time.Hour))
 
 	proposalIDBz := make([]byte, 8)
 	binary.LittleEndian.PutUint64(proposalIDBz, proposalID)

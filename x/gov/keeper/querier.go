@@ -163,14 +163,11 @@ func queryTally(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, legacyQue
 	var tallyResult govtypes.TallyResult
 
 	switch {
-	case proposal.Status == types.StatusDepositPeriod:
+	case proposal.Status == govtypes.StatusDepositPeriod:
 		tallyResult = govtypes.EmptyTallyResult()
 
-	case proposal.Status == types.StatusPassed || proposal.Status == types.StatusRejected:
+	case proposal.Status == govtypes.StatusPassed || proposal.Status == govtypes.StatusRejected:
 		tallyResult = proposal.FinalTallyResult
-
-	case proposal.Status == types.StatusCertifierVotingPeriod:
-		_, _, tallyResult = SecurityTally(ctx, keeper, proposal)
 
 	default:
 		// proposal is in voting period

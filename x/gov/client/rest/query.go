@@ -131,9 +131,8 @@ func queryDepositsHandlerFn(cliCtx client.Context) http.HandlerFunc {
 		// For inactive proposals we must query the txs directly to get the deposits
 		// as they're no longer in state.
 		propStatus := proposal.Status
-		if !(propStatus == types.StatusCertifierVotingPeriod ||
-			propStatus == types.StatusValidatorVotingPeriod ||
-			propStatus == types.StatusDepositPeriod) {
+		if !(propStatus == govtypes.StatusVotingPeriod ||
+			propStatus == govtypes.StatusDepositPeriod) {
 			res, err = govUtils.QueryDepositsByTxQuery(cliCtx, params)
 		} else {
 			res, _, err = cliCtx.QueryWithData("custom/gov/deposits", bz)
@@ -388,9 +387,8 @@ func queryVotesOnProposalHandlerFn(cliCtx client.Context) http.HandlerFunc {
 		// For inactive proposals we must query the txs directly to get the votes
 		// as they're no longer in state.
 		propStatus := proposal.Status
-		if !(propStatus == types.StatusCertifierVotingPeriod ||
-			propStatus == types.StatusValidatorVotingPeriod ||
-			propStatus == types.StatusDepositPeriod) {
+		if !(propStatus == govtypes.StatusVotingPeriod ||
+			propStatus == govtypes.StatusDepositPeriod) {
 			res, err = govUtils.QueryVotesByTxQuery(cliCtx, params)
 		} else {
 			res, _, err = cliCtx.QueryWithData("custom/gov/votes", bz)
@@ -471,7 +469,7 @@ func queryProposalsWithParameterFn(cliCtx client.Context) http.HandlerFunc {
 		var (
 			voterAddr      sdk.AccAddress
 			depositorAddr  sdk.AccAddress
-			proposalStatus types.ProposalStatus
+			proposalStatus govtypes.ProposalStatus
 		)
 
 		if v := r.URL.Query().Get(RestVoter); v != "" {
@@ -491,7 +489,7 @@ func queryProposalsWithParameterFn(cliCtx client.Context) http.HandlerFunc {
 		}
 
 		if v := r.URL.Query().Get(RestProposalStatus); v != "" {
-			proposalStatus, err = types.ProposalStatusFromString(govUtils.NormalizeProposalStatus(v))
+			proposalStatus, err = govtypes.ProposalStatusFromString(govUtils.NormalizeProposalStatus(v))
 			if err != nil {
 				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 				return

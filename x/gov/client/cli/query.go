@@ -113,7 +113,7 @@ $ %[1]s query gov proposals --page=2 --limit=100
 			bechVoterAddr := viper.GetString(flagVoter)
 			strProposalStatus := viper.GetString(flagStatus)
 
-			var proposalStatus types.ProposalStatus
+			var proposalStatus govtypes.ProposalStatus
 			var err error
 			if bechDepositorAddr != "" {
 				_, err = sdk.AccAddressFromBech32(bechDepositorAddr)
@@ -130,7 +130,7 @@ $ %[1]s query gov proposals --page=2 --limit=100
 			}
 
 			if strProposalStatus != "" {
-				proposalStatus, err = types.ProposalStatusFromString(govUtils.NormalizeProposalStatus(strProposalStatus))
+				proposalStatus, err = govtypes.ProposalStatusFromString(govUtils.NormalizeProposalStatus(strProposalStatus))
 				if err != nil {
 					return err
 				}
@@ -293,7 +293,7 @@ $ %[1]s query gov votes 1 --page=2 --limit=100
 
 			// TODO Query tx depending on proposal status?
 			propStatus := proposalRes.GetProposal().Status
-			if !(propStatus == types.StatusCertifierVotingPeriod || propStatus == types.StatusValidatorVotingPeriod || propStatus == types.StatusDepositPeriod) {
+			if !(propStatus == govtypes.StatusVotingPeriod || propStatus == govtypes.StatusDepositPeriod) {
 				page, _ := cmd.Flags().GetInt(flags.FlagPage)
 				limit, _ := cmd.Flags().GetInt(flags.FlagLimit)
 
@@ -380,7 +380,7 @@ $ %s query gov deposit 1 certik1r4tssz9j0025vrct90uxxfzrte0w94q6s27n4x
 
 			var deposit govtypes.Deposit
 			propStatus := proposalRes.Proposal.Status
-			if !(propStatus == types.StatusCertifierVotingPeriod || propStatus == types.StatusValidatorVotingPeriod || propStatus == types.StatusDepositPeriod) {
+			if !(propStatus == govtypes.StatusVotingPeriod || propStatus == govtypes.StatusDepositPeriod) {
 				params := govtypes.NewQueryDepositParams(proposalID, depositorAddr)
 				resByTxQuery, err := govUtils.QueryDepositByTxQuery(clientCtx, params)
 				if err != nil {
@@ -446,7 +446,7 @@ $ %[1]s query gov deposits 1
 			}
 
 			propStatus := proposalRes.GetProposal().Status
-			if !(propStatus == types.StatusCertifierVotingPeriod || propStatus == types.StatusValidatorVotingPeriod || propStatus == types.StatusDepositPeriod) {
+			if !(propStatus == govtypes.StatusVotingPeriod || propStatus == govtypes.StatusDepositPeriod) {
 				params := govtypes.NewQueryProposalParams(proposalID)
 				resByTxQuery, err := govUtils.QueryDepositsByTxQuery(cliCtx, params)
 				if err != nil {

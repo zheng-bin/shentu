@@ -51,14 +51,9 @@ func (k msgServer) SubmitProposal(goCtx context.Context, msg *govtypes.MsgSubmit
 		return nil, err
 	}
 
-	// Skip deposit period for proposals of council members.
-	isVotingPeriodActivated := k.ActivateCouncilProposalVotingPeriod(ctx, proposal)
-	if !isVotingPeriodActivated {
-		// Non council members can add deposit to their newly submitted proposals.
-		isVotingPeriodActivated, err = k.AddDeposit(ctx, proposal.ProposalId, msg.GetProposer(), msg.GetInitialDeposit())
-		if err != nil {
-			return nil, err
-		}
+	votingStarted, err := k.AddDeposit(ctx, proposal.ProposalId, msg.GetProposer(), msg.GetInitialDeposit())
+	if err != nil {
+		return nil, err
 	}
 
 	if err := updateAfterSubmitProposal(ctx, k.Keeper, proposal); err != nil {
@@ -78,7 +73,7 @@ func (k msgServer) SubmitProposal(goCtx context.Context, msg *govtypes.MsgSubmit
 		sdk.NewAttribute(govtypes.AttributeKeyProposalType, msg.GetContent().ProposalType()),
 		sdk.NewAttribute(govtypes.AttributeKeyProposalID, fmt.Sprintf("%d", proposal.ProposalId)),
 	)
-	if isVotingPeriodActivated {
+	if votingStarted {
 		submitEvent = submitEvent.AppendAttributes(
 			sdk.NewAttribute(govtypes.AttributeKeyVotingPeriodStart, fmt.Sprintf("%d", proposal.ProposalId)),
 		)
@@ -217,7 +212,6 @@ func (k msgServer) Deposit(goCtx context.Context, msg *govtypes.MsgDeposit) (*go
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, govtypes.AttributeValueCategory),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Depositor),
-			//sdk.NewAttribute(types.AttributeTxHash, hex.EncodeToString(tmhash.Sum(ctx.TxBytes()))),
 		),
 	)
 

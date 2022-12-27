@@ -1,6 +1,9 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+)
 
 // QueryProposalsParams defines data structure for querying 'custom/gov/proposals'.
 type QueryProposalsParams struct {
@@ -8,11 +11,11 @@ type QueryProposalsParams struct {
 	Limit          int
 	Voter          sdk.AccAddress
 	Depositor      sdk.AccAddress
-	ProposalStatus ProposalStatus
+	ProposalStatus govtypes.ProposalStatus
 }
 
 // NewQueryProposalsParams creates a new instance of QueryProposalsParams.
-func NewQueryProposalsParams(page, limit int, status ProposalStatus, voter, depositor sdk.AccAddress) QueryProposalsParams {
+func NewQueryProposalsParams(page, limit int, status govtypes.ProposalStatus, voter, depositor sdk.AccAddress) QueryProposalsParams {
 	return QueryProposalsParams{
 		Page:           page,
 		Limit:          limit,
