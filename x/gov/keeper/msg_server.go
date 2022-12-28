@@ -46,7 +46,7 @@ func (k msgServer) SubmitProposal(goCtx context.Context, msg *govtypes.MsgSubmit
 		return nil, err
 	}
 
-	proposal, err := k.Keeper.SubmitProposal(ctx, msg.GetContent(), msg.GetProposer())
+	proposal, err := k.Keeper.SubmitProposal(ctx, msg.GetContent())
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func validateProposalByType(ctx sdk.Context, k Keeper, msg *govtypes.MsgSubmitPr
 	return nil
 }
 
-func updateAfterSubmitProposal(ctx sdk.Context, k Keeper, proposal types.Proposal) error {
+func updateAfterSubmitProposal(ctx sdk.Context, k Keeper, proposal govtypes.Proposal) error {
 	if proposal.ProposalType() == shieldtypes.ProposalTypeShieldClaim {
 		c := proposal.GetContent().(*shieldtypes.ShieldClaimProposal)
 		lockPeriod := k.GetVotingParams(ctx).VotingPeriod * 2

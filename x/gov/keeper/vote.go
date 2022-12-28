@@ -31,7 +31,7 @@ func (k Keeper) AddVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAdd
 	}
 
 	// Add cert vote
-	if proposal.HasSecurityVoting() && !k.IsCertifierVoted(ctx, proposalID) {
+	if k.HasSecurityVoting(proposal) && !k.IsCertifierVoted(ctx, proposalID) {
 		return k.AddCertifierVoted(ctx, proposalID, voterAddr, options)
 	}
 

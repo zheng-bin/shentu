@@ -6,7 +6,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	certtypes "github.com/shentufoundation/shentu/v2/x/cert/types"
-	"github.com/shentufoundation/shentu/v2/x/gov/types"
 	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
@@ -20,7 +19,7 @@ type validatorGovInfo struct {
 }
 
 // Tally counts the votes and returns whether the proposal passes and/or if tokens should be burned.
-func Tally(ctx sdk.Context, k Keeper, proposal types.Proposal) (pass bool, veto bool, tallyResults govtypes.TallyResult) {
+func Tally(ctx sdk.Context, k Keeper, proposal govtypes.Proposal) (pass bool, veto bool, tallyResults govtypes.TallyResult) {
 	results := newResults()
 
 	totalVotingPower := sdk.ZeroDec()
@@ -262,7 +261,7 @@ func passAndVetoSecurityResult(k Keeper, ctx sdk.Context, th TallyHelper) (pass 
 // we setup the validator voting round and the calling function EndBlocker
 // continues to the next iteration. If it fails, the proposal is removed by the
 // logic in EndBlocker.
-func SecurityTally(ctx sdk.Context, k Keeper, proposal types.Proposal) (bool, bool, govtypes.TallyResult) {
+func SecurityTally(ctx sdk.Context, k Keeper, proposal govtypes.Proposal) (bool, bool, govtypes.TallyResult) {
 	results := newResults()
 	totalHeadCounts := sdk.ZeroDec()
 
