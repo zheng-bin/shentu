@@ -88,6 +88,8 @@ func SimulateSubmitProposal(
 		)
 		var simAccount simtypes.Account
 		if content.ProposalType() == shieldtypes.ProposalTypeShieldClaim {
+			// TODO The mention of shield involves problems
+			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgSubmitProposal, ""), nil, nil
 			c := content.(*shieldtypes.ShieldClaimProposal)
 			for _, simAcc := range accs {
 				proposerAddr, _ := sdk.AccAddressFromBech32(c.Proposer)
@@ -236,8 +238,16 @@ func SimulateMsgVote(ak govtypes.AccountKeeper, bk govtypes.BankKeeper, k keeper
 			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgVote, ""), nil, nil
 		}
 
-		if !k.IsCertifierVoted(ctx, proposal.ProposalId) {
+		if proposal.Status != govtypes.StatusVotingPeriod {
 			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgVote, ""), nil, nil
+		}
+
+		if proposal.ProposalType() == shieldtypes.ProposalTypeShieldClaim ||
+			proposal.ProposalType() == certtypes.ProposalTypeCertifierUpdate ||
+			proposal.ProposalType() == upgradetypes.ProposalTypeSoftwareUpgrade {
+			if !k.IsCertifierVoted(ctx, proposal.ProposalId) {
+				return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgVote, ""), nil, nil
+			}
 		}
 
 		option := randomVotingOption(r)
@@ -288,7 +298,10 @@ func SimulateCertifierMsgVote(ak govtypes.AccountKeeper, bk govtypes.BankKeeper,
 			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgVote, ""), nil, nil
 		}
 
-		if !k.IsCertifierVoted(ctx, proposal.ProposalId) {
+		if proposal.Status != govtypes.StatusVotingPeriod {
+			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgVote, ""), nil, nil
+		}
+		if k.IsCertifierVoted(ctx, proposal.ProposalId) {
 			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgVote, ""), nil, nil
 		}
 
@@ -340,7 +353,7 @@ func SimulateMsgDeposit(ak govtypes.AccountKeeper, bk govtypes.BankKeeper, k kee
 			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgDeposit, ""), nil, nil
 		}
 
-		if !k.IsCertifierVoted(ctx, proposal.ProposalId) {
+		if proposal.Status != govtypes.StatusDepositPeriod {
 			return simtypes.NoOpMsg(govtypes.ModuleName, govtypes.TypeMsgDeposit, ""), nil, nil
 		}
 
