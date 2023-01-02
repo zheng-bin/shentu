@@ -113,7 +113,7 @@ func (k Keeper) AddCertifierVoted(ctx sdk.Context, proposalID uint64, voterAddr 
 }
 
 func (k Keeper) SetCertifierVoted(ctx sdk.Context, proposalID uint64) {
-	k.setCertifierVote(ctx, proposalID)
+	k.SetCertVote(ctx, proposalID)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -123,8 +123,8 @@ func (k Keeper) SetCertifierVoted(ctx sdk.Context, proposalID uint64) {
 	)
 }
 
-// setCertifierVote sets a cert vote to the gov store
-func (k Keeper) setCertifierVote(ctx sdk.Context, proposalID uint64) {
+// SetCertVote sets a cert vote to the gov store
+func (k Keeper) SetCertVote(ctx sdk.Context, proposalID uint64) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.CertVotesKey(proposalID), govtypes.GetProposalIDBytes(proposalID))
 }

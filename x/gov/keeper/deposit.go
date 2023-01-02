@@ -12,7 +12,7 @@ import (
 )
 
 // AddDeposit adds or updates a deposit of a specific depositor on a specific proposal.
-// When proposer is a council member, it's not depositable.
+// When the proposal type is ShieldClaim, it's not depositable.
 // Activates voting period when appropriate.
 func (k Keeper) AddDeposit(ctx sdk.Context, proposalID uint64, depositorAddr sdk.AccAddress, depositAmount sdk.Coins) (bool, error) {
 	// checks to see if proposal exists
@@ -69,15 +69,6 @@ func (k Keeper) upsertDeposit(ctx sdk.Context, proposalID uint64, depositorAddr 
 	}
 
 	k.SetDeposit(ctx, deposit)
-}
-
-// GetDepositsByProposalID returns all the deposits from a proposal.
-func (k Keeper) GetDepositsByProposalID(ctx sdk.Context, proposalID uint64) (deposits govtypes.Deposits) {
-	k.IterateDeposits(ctx, proposalID, func(deposit govtypes.Deposit) bool {
-		deposits = append(deposits, deposit)
-		return false
-	})
-	return
 }
 
 // RefundDepositsByProposalID refunds and deletes all the deposits on a specific proposal.
