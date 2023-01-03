@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"encoding/binary"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -36,25 +35,6 @@ func (k Keeper) ActivateVotingPeriod(ctx sdk.Context, proposal govtypes.Proposal
 	k.RemoveFromInactiveProposalQueue(ctx, proposal.ProposalId, oldDepositEndTime)
 	k.InsertActiveProposalQueue(ctx, proposal.ProposalId, proposal.VotingEndTime)
 
-}
-
-// DeleteProposalByProposalID deletes a proposal from store.
-func (k Keeper) DeleteProposalByProposalID(ctx sdk.Context, proposalID uint64) {
-	store := ctx.KVStore(k.storeKey)
-	proposal, ok := k.GetProposal(ctx, proposalID)
-	if !ok {
-		panic(fmt.Sprintf("couldn't find proposal with id#%d", proposalID))
-	}
-	k.RemoveFromInactiveProposalQueue(ctx, proposalID, proposal.DepositEndTime)
-	k.RemoveFromActiveProposalQueue(ctx, proposalID, proposal.VotingEndTime)
-	store.Delete(ProposalKey(proposalID))
-}
-
-// ProposalKey gets a specific proposal from the store.
-func ProposalKey(proposalID uint64) []byte {
-	bz := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bz, proposalID)
-	return append(govtypes.ProposalsKeyPrefix, bz...)
 }
 
 // isValidator checks if the input address is a validator.
