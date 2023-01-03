@@ -11,6 +11,28 @@ import (
 	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
+// GetProposal get Proposal from store by ProposalID.
+func (k Keeper) GetProposal(ctx sdk.Context, proposalID uint64) (govtypes.Proposal, bool) {
+	store := ctx.KVStore(k.storeKey)
+
+	bz := store.Get(ProposalKey(proposalID))
+	if bz == nil {
+		return govtypes.Proposal{}, false
+	}
+
+	var proposal govtypes.Proposal
+	k.MustUnmarshalProposal(bz, &proposal)
+
+	return proposal, true
+}
+
+// SetProposal sets a proposal to store.
+func (k Keeper) SetProposal(ctx sdk.Context, proposal govtypes.Proposal) {
+	store := ctx.KVStore(k.storeKey)
+	bz := k.MustMarshalProposal(proposal)
+	store.Set(ProposalKey(proposal.ProposalId), bz)
+}
+
 // AddDeposit adds or updates a deposit of a specific depositor on a specific proposal.
 // When the proposal type is ShieldClaim, it's not depositable.
 // Activates voting period when appropriate.
