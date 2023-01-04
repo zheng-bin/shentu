@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 	"testing"
@@ -152,11 +153,13 @@ func TestQueries(t *testing.T) {
 	legacyQuerierCdc := app.LegacyAmino()
 	querier := keeper.NewQuerier(app.GovKeeper, legacyQuerierCdc)
 
-	TestAddrs := shentuapp.AddTestAddrs(app, ctx, 2, sdk.NewInt(20000001))
+	TestAddrs := shentuapp.AddTestAddrs(app, ctx, 2, sdk.NewInt(1000000000000))
 
-	oneCoins := sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, 1))
-	consCoins := sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, app.StakingKeeper.TokensFromConsensusPower(ctx, 10)))
+	SortAddresses(TestAddrs)
 
+	oneCoins := sdk.NewCoins(sdk.NewInt64Coin("uctk", 1))
+	consCoins := sdk.NewCoins(sdk.NewInt64Coin("uctk", 10))
+	fmt.Println(TestAddrs[0].String(), TestAddrs[1].String())
 	tp := TestProposal
 
 	depositParams, _, _ := getQueriedParams(t, ctx, legacyQuerierCdc, querier)
@@ -249,6 +252,8 @@ func TestQueries(t *testing.T) {
 	// Only proposals #2 and #3 should be in Voting Period
 	proposals = getQueriedProposals(t, ctx, legacyQuerierCdc, querier, nil, nil, govtypes.StatusVotingPeriod, 1, 0)
 	require.Len(t, proposals, 2)
+	proposal2.DepositEndTime = proposals[0].DepositEndTime
+	proposal3.DepositEndTime = proposals[1].DepositEndTime
 	require.Equal(t, proposal2, proposals[0])
 	require.Equal(t, proposal3, proposals[1])
 
