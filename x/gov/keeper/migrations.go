@@ -5,7 +5,7 @@ import (
 	v043 "github.com/cosmos/cosmos-sdk/x/gov/legacy/v043"
 
 	v220 "github.com/shentufoundation/shentu/v2/x/gov/legacy/v220"
-	v300 "github.com/shentufoundation/shentu/v2/x/gov/legacy/v300"
+	v300 "github.com/shentufoundation/shentu/v2/x/gov/legacy/v270"
 )
 
 // Migrator is a struct for handling in-place store migrations.

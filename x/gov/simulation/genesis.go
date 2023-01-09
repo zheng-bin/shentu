@@ -36,11 +36,11 @@ func RandomizedGenState(simState *module.SimulationState) {
 }
 
 // GenerateADepositParams returns a DepositParams object with all of its fields randomized.
-func GenerateADepositParams(r *rand.Rand) types.DepositParams {
-	minInitialDeposit := sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, int64(sim.RandIntBetween(r, 1, 1e2))))
+func GenerateADepositParams(r *rand.Rand) govTypes.DepositParams {
+	//minInitialDeposit := sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, int64(sim.RandIntBetween(r, 1, 1e2))))
 	minDeposit := sdk.NewCoins(sdk.NewInt64Coin(sdk.DefaultBondDenom, int64(sim.RandIntBetween(r, 1, 1e3))))
 	maxDepositPeriod := sim.RandIntBetween(r, 1, 2*60*60*24*2)
-	return types.NewDepositParams(minInitialDeposit, minDeposit, time.Duration(maxDepositPeriod)*time.Second)
+	return govTypes.NewDepositParams(minDeposit, time.Duration(maxDepositPeriod)*time.Second)
 }
 
 // GenerateAVotingParams returns a VotingParams object with all of its fields randomized.
@@ -50,13 +50,14 @@ func GenerateAVotingParams(r *rand.Rand) govTypes.VotingParams {
 }
 
 // GenerateTallyParams returns a TallyParams object with all of its fields randomized.
-func GenerateTallyParams(r *rand.Rand) types.TallyParams {
-	aTallyParam := GenerateATallyParams(r)
-	return types.TallyParams{
-		DefaultTally:                     &aTallyParam,
-		CertifierUpdateSecurityVoteTally: &aTallyParam,
-		CertifierUpdateStakeVoteTally:    &aTallyParam,
-	}
+func GenerateTallyParams(r *rand.Rand) govTypes.TallyParams {
+	//aTallyParam := GenerateATallyParams(r)
+	//return govTypes.TallyParams{
+	//	DefaultTally:                     &aTallyParam,
+	//	CertifierUpdateSecurityVoteTally: &aTallyParam,
+	//	CertifierUpdateStakeVoteTally:    &aTallyParam,
+	//}
+	return GenerateATallyParams(r)
 }
 
 // GenerateATallyParams returns a TallyParams object with all of its fields randomized.

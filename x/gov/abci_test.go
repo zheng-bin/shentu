@@ -16,8 +16,6 @@ import (
 	"github.com/shentufoundation/shentu/v2/x/gov"
 )
 
-const uctkDenom = "uctk"
-
 func TestTickExpiredDepositPeriod(t *testing.T) {
 	app := shentuapp.Setup(false)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
@@ -34,7 +32,7 @@ func TestTickExpiredDepositPeriod(t *testing.T) {
 
 	newProposalMsg, err := govtypes.NewMsgSubmitProposal(
 		govtypes.ContentFromProposalType("test", "test", govtypes.ProposalTypeText),
-		sdk.Coins{sdk.NewInt64Coin(uctkDenom, 5)},
+		sdk.Coins{sdk.NewInt64Coin("uctk", 5)},
 		addrs[0],
 	)
 	require.NoError(t, err)
@@ -86,7 +84,7 @@ func TestTickMultipleExpiredDepositPeriod(t *testing.T) {
 
 	newProposalMsg, err := govtypes.NewMsgSubmitProposal(
 		govtypes.ContentFromProposalType("test", "test", govtypes.ProposalTypeText),
-		sdk.Coins{sdk.NewInt64Coin(uctkDenom, 5)},
+		sdk.Coins{sdk.NewInt64Coin("uctk", 5)},
 		addrs[0],
 	)
 	require.NoError(t, err)
@@ -109,7 +107,7 @@ func TestTickMultipleExpiredDepositPeriod(t *testing.T) {
 
 	newProposalMsg2, err := govtypes.NewMsgSubmitProposal(
 		govtypes.ContentFromProposalType("test2", "test2", govtypes.ProposalTypeText),
-		sdk.Coins{sdk.NewInt64Coin(uctkDenom, 5)},
+		sdk.Coins{sdk.NewInt64Coin("uctk", 5)},
 		addrs[0],
 	)
 	require.NoError(t, err)
@@ -166,7 +164,7 @@ func TestTickPassedDepositPeriod(t *testing.T) {
 
 	newProposalMsg, err := govtypes.NewMsgSubmitProposal(
 		govtypes.ContentFromProposalType("test2", "test2", govtypes.ProposalTypeText),
-		sdk.Coins{sdk.NewInt64Coin(uctkDenom, 5)},
+		sdk.Coins{sdk.NewInt64Coin("uctk", 5)},
 		addrs[0],
 	)
 	require.NoError(t, err)
@@ -193,7 +191,7 @@ func TestTickPassedDepositPeriod(t *testing.T) {
 	require.False(t, inactiveQueue.Valid())
 	inactiveQueue.Close()
 
-	newDepositMsg := govtypes.NewMsgDeposit(addrs[1], proposalID, sdk.Coins{sdk.NewInt64Coin(uctkDenom, 5)})
+	newDepositMsg := govtypes.NewMsgDeposit(addrs[1], proposalID, sdk.Coins{sdk.NewInt64Coin("uctk", 5)})
 
 	res, err = govHandler(ctx, newDepositMsg)
 	require.NoError(t, err)
@@ -223,7 +221,7 @@ func TestTickPassedVotingPeriod(t *testing.T) {
 	require.False(t, activeQueue.Valid())
 	activeQueue.Close()
 
-	proposalCoins := sdk.Coins{sdk.NewCoin(uctkDenom, app.StakingKeeper.TokensFromConsensusPower(ctx, 5))}
+	proposalCoins := sdk.Coins{sdk.NewCoin("uctk", app.StakingKeeper.TokensFromConsensusPower(ctx, 5))}
 	newProposalMsg, err := govtypes.NewMsgSubmitProposal(TestProposal, proposalCoins, addrs[0])
 	require.NoError(t, err)
 

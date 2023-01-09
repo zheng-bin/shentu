@@ -154,8 +154,7 @@ func processSecurityVote(ctx sdk.Context, k keeper.Keeper, proposal govtypes.Pro
 	var endVoting bool
 	pass, endVoting, tallyResults = keeper.SecurityTally(ctx, k, proposal)
 	if !pass {
-		// Do nothing, because the proposal still has time before the voting period
-		// ends.
+		// Do nothing, because the proposal still has time before the voting period ends.
 		return false
 	}
 	// Else: the proposal passed the certifier voting period.

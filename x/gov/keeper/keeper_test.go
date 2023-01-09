@@ -16,7 +16,6 @@ import (
 
 	shentuapp "github.com/shentufoundation/shentu/v2/app"
 	"github.com/shentufoundation/shentu/v2/x/gov/keeper"
-	"github.com/shentufoundation/shentu/v2/x/gov/types"
 	stakingkeeper "github.com/shentufoundation/shentu/v2/x/staking/keeper"
 )
 
@@ -37,7 +36,7 @@ type KeeperTestSuite struct {
 	address             []sdk.AccAddress
 	queryClient         govtypes.QueryClient
 	validatorAccAddress sdk.AccAddress
-	msgServer           types.MsgServer
+	msgServer           govtypes.MsgServer
 }
 
 func (suite *KeeperTestSuite) SetupTest() {

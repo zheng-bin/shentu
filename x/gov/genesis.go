@@ -16,6 +16,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, ak govTypes.AccountKeeper, bk
 	k.SetDepositParams(ctx, data.DepositParams)
 	k.SetVotingParams(ctx, data.VotingParams)
 	k.SetTallyParams(ctx, data.TallyParams)
+	k.SetCustomParams(ctx, data.CustomParams)
 
 	// check if the deposits pool account exists
 	moduleAcc := k.GetGovernanceAccount(ctx)
@@ -33,7 +34,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, ak govTypes.AccountKeeper, bk
 		k.SetVote(ctx, vote)
 	}
 
-	for _, proposalID := range data.CertVotedProposalIds {
+	for _, proposalID := range data.CustomParams.CertVotedProposalIds {
 		k.SetCertVote(ctx, proposalID)
 	}
 
@@ -66,6 +67,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	votingParams := k.GetVotingParams(ctx)
 	tallyParams := k.GetTallyParams(ctx)
 	proposals := k.GetProposals(ctx)
+	customParams := k.GetCustomParams(ctx)
 
 	var genState types.GenesisState
 
@@ -73,7 +75,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 		genState.Deposits = append(genState.Deposits, k.GetDeposits(ctx, proposal.ProposalId)...)
 		genState.Votes = append(genState.Votes, k.GetVotes(ctx, proposal.ProposalId)...)
 		if k.IsCertifierVoted(ctx, proposal.ProposalId) {
-			genState.CertVotedProposalIds = append(genState.CertVotedProposalIds, proposal.ProposalId)
+			customParams.CertVotedProposalIds = append(customParams.CertVotedProposalIds, proposal.ProposalId)
 		}
 	}
 	genState.StartingProposalId = startingProposalID
@@ -81,6 +83,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genState.DepositParams = depositParams
 	genState.VotingParams = votingParams
 	genState.TallyParams = tallyParams
+	genState.CustomParams = customParams
 
 	return &genState
 }
