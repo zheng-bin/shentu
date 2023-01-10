@@ -175,7 +175,7 @@ func SimulateSubmitProposal(
 
 		// 2) Schedule deposit operations
 		if content.ProposalType() != shieldtypes.ProposalTypeShieldClaim {
-			for i := 0; i < 20; i++ {
+			for i := 0; i < 10; i++ {
 				fops = append(fops, simtypes.FutureOperation{
 					BlockHeight: int(ctx.BlockHeight()) + simtypes.RandIntBetween(r, 1, 5),
 					Op:          SimulateMsgDeposit(ak, bk, k, proposalID),
