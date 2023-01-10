@@ -13,6 +13,9 @@ import (
 // DefaultGenesisState creates a default GenesisState object.
 func DefaultGenesisState() *GenesisState {
 	minDepositTokens := sdk.TokensFromConsensusPower(512, sdk.DefaultPowerReduction)
+
+	// quorum, threshold, and veto threshold params
+	defaultTally := govTypes.NewTallyParams(sdk.NewDecWithPrec(334, 3), sdk.NewDecWithPrec(5, 1), sdk.NewDecWithPrec(334, 3))
 	certifierUpdateSecurityVoteTally := govTypes.NewTallyParams(sdk.NewDecWithPrec(334, 3), sdk.NewDecWithPrec(667, 3), sdk.NewDecWithPrec(334, 3))
 	certifierUpdateStakeVoteTally := govTypes.NewTallyParams(sdk.NewDecWithPrec(334, 3), sdk.NewDecWithPrec(9, 1), sdk.NewDecWithPrec(334, 3))
 
@@ -23,7 +26,7 @@ func DefaultGenesisState() *GenesisState {
 			MaxDepositPeriod: govTypes.DefaultPeriod,
 		},
 		VotingParams: govTypes.DefaultVotingParams(),
-		TallyParams:  govTypes.DefaultTallyParams(),
+		TallyParams:  defaultTally,
 		CustomParams: CustomParams{
 			CertifierUpdateSecurityVoteTally: &certifierUpdateSecurityVoteTally,
 			CertifierUpdateStakeVoteTally:    &certifierUpdateStakeVoteTally,

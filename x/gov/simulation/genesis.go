@@ -21,7 +21,13 @@ func RandomizedGenState(simState *module.SimulationState) {
 
 	gs.DepositParams = GenerateADepositParams(r)
 	gs.VotingParams = GenerateAVotingParams(r)
-	gs.TallyParams = GenerateTallyParams(r)
+	tallyParams := GenerateTallyParams(r)
+	gs.TallyParams = tallyParams
+	gs.CustomParams = types.CustomParams{
+		CertifierUpdateSecurityVoteTally: &tallyParams,
+		CertifierUpdateStakeVoteTally:    &tallyParams,
+		CertVotedProposalIds:             nil,
+	}
 
 	// For the shield module, locking period should be shorter than unbonding period.
 	stakingGenStatebz := simState.GenState[stakingtypes.ModuleName]
@@ -51,17 +57,6 @@ func GenerateAVotingParams(r *rand.Rand) govTypes.VotingParams {
 
 // GenerateTallyParams returns a TallyParams object with all of its fields randomized.
 func GenerateTallyParams(r *rand.Rand) govTypes.TallyParams {
-	//aTallyParam := GenerateATallyParams(r)
-	//return govTypes.TallyParams{
-	//	DefaultTally:                     &aTallyParam,
-	//	CertifierUpdateSecurityVoteTally: &aTallyParam,
-	//	CertifierUpdateStakeVoteTally:    &aTallyParam,
-	//}
-	return GenerateATallyParams(r)
-}
-
-// GenerateATallyParams returns a TallyParams object with all of its fields randomized.
-func GenerateATallyParams(r *rand.Rand) govTypes.TallyParams {
 	quorum := sdk.NewDecWithPrec(int64(sim.RandIntBetween(r, 334, 500)), 3)
 	threshold := sdk.NewDecWithPrec(int64(sim.RandIntBetween(r, 450, 550)), 3)
 	veto := sdk.NewDecWithPrec(int64(sim.RandIntBetween(r, 250, 334)), 3)
