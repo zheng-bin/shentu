@@ -40,19 +40,6 @@ func validateDepositParams(i interface{}) error {
 	return nil
 }
 
-// Params returns all the governance params
-type Params struct {
-	VotingParams  govTypes.VotingParams  `json:"voting_params" yaml:"voting_params"`
-	TallyParams   govTypes.TallyParams   `json:"tally_params" yaml:"tally_params"`
-	DepositParams govTypes.DepositParams `json:"deposit_params" yaml:"deposit_parmas"`
-	CustomParams  CustomParams           `json:"custom_params" yaml:"custom_params"`
-}
-
-func (gp Params) String() string {
-	return gp.VotingParams.String() + "\n" +
-		gp.TallyParams.String() + "\n" + gp.DepositParams.String()
-}
-
 func validateTally(i interface{}) error {
 	v, ok := i.(govTypes.TallyParams)
 	if !ok {

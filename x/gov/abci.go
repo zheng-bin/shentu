@@ -17,7 +17,7 @@ func removeInactiveProposals(ctx sdk.Context, k keeper.Keeper) {
 
 	k.IterateInactiveProposalsQueue(ctx, ctx.BlockHeader().Time, func(proposal govtypes.Proposal) bool {
 		k.DeleteProposal(ctx, proposal.ProposalId)
-		k.RefundDepositsByProposalID(ctx, proposal.ProposalId)
+		k.RefundDeposits(ctx, proposal.ProposalId)
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
@@ -82,10 +82,10 @@ func processActiveProposal(ctx sdk.Context, k keeper.Keeper, proposal govtypes.P
 	}
 
 	if veto {
-		k.DeleteDepositsByProposalID(ctx, proposal.ProposalId)
+		k.DeleteDeposits(ctx, proposal.ProposalId)
 		updateVeto(ctx, k, proposal)
 	} else {
-		k.RefundDepositsByProposalID(ctx, proposal.ProposalId)
+		k.RefundDeposits(ctx, proposal.ProposalId)
 		if !pass {
 			updateAbstain(ctx, k, proposal)
 		}

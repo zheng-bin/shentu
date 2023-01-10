@@ -95,8 +95,10 @@ func (k Keeper) AddCertifierVoted(ctx sdk.Context, proposalID uint64, voterAddr 
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			types.EventTypeSetCertVote,
+			types.EventTypeCertVote,
+			sdk.NewAttribute(govtypes.AttributeKeyOption, options.String()),
 			sdk.NewAttribute(govtypes.AttributeKeyProposalID, fmt.Sprintf("%d", proposalID)),
+			sdk.NewAttribute(types.AttributeKeyVoter, voterAddr.String()),
 			sdk.NewAttribute(types.AttributeTxHash, txhash),
 		),
 	)
