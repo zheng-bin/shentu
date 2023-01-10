@@ -34,7 +34,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, ak govTypes.AccountKeeper, bk
 		k.SetVote(ctx, vote)
 	}
 
-	for _, proposalID := range data.CustomParams.CertVotedProposalIds {
+	for _, proposalID := range data.CertVotedProposalIds {
 		k.SetCertVote(ctx, proposalID)
 	}
 
@@ -75,7 +75,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 		genState.Deposits = append(genState.Deposits, k.GetDeposits(ctx, proposal.ProposalId)...)
 		genState.Votes = append(genState.Votes, k.GetVotes(ctx, proposal.ProposalId)...)
 		if k.IsCertifierVoted(ctx, proposal.ProposalId) {
-			customParams.CertVotedProposalIds = append(customParams.CertVotedProposalIds, proposal.ProposalId)
+			genState.CertVotedProposalIds = append(genState.CertVotedProposalIds, proposal.ProposalId)
 		}
 	}
 	genState.StartingProposalId = startingProposalID

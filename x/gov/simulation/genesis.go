@@ -26,7 +26,6 @@ func RandomizedGenState(simState *module.SimulationState) {
 	gs.CustomParams = types.CustomParams{
 		CertifierUpdateSecurityVoteTally: &tallyParams,
 		CertifierUpdateStakeVoteTally:    &tallyParams,
-		CertVotedProposalIds:             nil,
 	}
 
 	// For the shield module, locking period should be shorter than unbonding period.

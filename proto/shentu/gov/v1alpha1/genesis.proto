@@ -25,12 +25,12 @@ message GenesisState {
     cosmos.gov.v1beta1.TallyParams tally_params = 7 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"tally_params\""];
     // params defines all the parameters of related to custom.
     CustomParams custom_params = 8 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"custom_params\""];
+    // proposals that require and have passed cert votes.
+    repeated uint64 cert_voted_proposal_ids = 9 [(gogoproto.moretags) = "yaml:\"cert_voted_proposal_ids\""];
 }
 
 message CustomParams {
     cosmos.gov.v1beta1.TallyParams certifier_update_security_vote_tally = 1;
     cosmos.gov.v1beta1.TallyParams certifier_update_stake_vote_tally = 2;
-    // proposals that require and have passed cert votes.
-    repeated uint64 cert_voted_proposal_ids = 3 [(gogoproto.moretags) = "yaml:\"cert_voted_proposal_ids\""];
 }
 
