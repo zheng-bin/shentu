@@ -26,7 +26,6 @@ func queryHostsHandlerFn(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := errors.New("queryHostsHandlerFn Not Implemented")
 		rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-		return
 	}
 }
 
@@ -104,7 +103,6 @@ func queryFindingsWithParameterFn(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := errors.New("queryFindingsWithParameterFn Not Implemented")
 		rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-		return
 	}
 }
 
@@ -113,6 +111,5 @@ func queryFindingsHandlerFn(clientCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := errors.New("queryFindingsHandlerFn Not Implemented")
 		rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-		return
 	}
 }

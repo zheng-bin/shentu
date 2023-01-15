@@ -14,7 +14,7 @@ const (
 
 // x/bounty module sentinel errors
 var (
-	//ErrUnknownHost    = sdkerrors.Register(ModuleName, errUnknownHost, "unknown host")
+	ErrUnknownHost    = sdkerrors.Register(ModuleName, errUnknownHost, "unknown host")
 	ErrUnknownProgram = sdkerrors.Register(ModuleName, errUnknownProgram, "unknown program")
-	//ErrUnknownFinding = sdkerrors.Register(ModuleName, errUnknownFinding, "unknown finding")
+	ErrUnknownFinding = sdkerrors.Register(ModuleName, errUnknownFinding, "unknown finding")
 )
