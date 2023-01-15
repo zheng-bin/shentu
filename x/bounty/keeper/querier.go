@@ -47,7 +47,7 @@ func queryHost(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Kee
 	return nil, nil
 }
 
-func queryPrograms(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper, cdc *codec.LegacyAmino) ([]byte, error) {
+func queryPrograms(ctx sdk.Context, _ []string, req abci.RequestQuery, keeper Keeper, cdc *codec.LegacyAmino) ([]byte, error) {
 	// TODO: implement this
 	var params types.QueryProgramsParams
 	err := cdc.UnmarshalJSON(req.Data, &params)
@@ -68,7 +68,7 @@ func queryPrograms(ctx sdk.Context, path []string, req abci.RequestQuery, keeper
 	return bz, nil
 }
 
-func queryProgram(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper, cdc *codec.LegacyAmino) ([]byte, error) {
+func queryProgram(ctx sdk.Context, _ []string, req abci.RequestQuery, keeper Keeper, cdc *codec.LegacyAmino) ([]byte, error) {
 	var params types.QueryProgramParams
 	err := cdc.UnmarshalJSON(req.Data, &params)
 	if err != nil {
